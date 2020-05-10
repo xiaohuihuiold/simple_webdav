@@ -12,7 +12,7 @@ class WebDAVClient {
   int port;
   Dio _dio;
 
-  bool get isAvailable => host != null && path != null && authenticate != null;
+  bool get isAvailable => host != null && authenticate != null;
 
   Map<String, dynamic> get headers => _dio.options.headers;
 
