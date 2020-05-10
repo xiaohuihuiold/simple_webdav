@@ -23,13 +23,11 @@ class WebDAVClient {
   }) {
     if (host != null && host.endsWith('/')) {
       host = host.substring(0, host.length - 1);
-      if (path == null) {
-        List<String> paths = host.split('/');
-        if (paths.length > 3) {
-          path = paths.last;
-          host = host.replaceAll(RegExp('$path\$'), '');
-          host = host.substring(0, host.length - 1);
-        }
+      List<String> paths = host.split('/');
+      if (paths.length > 3) {
+        path = paths.last;
+        host = host.replaceAll(RegExp('$path\$'), '');
+        host = host.substring(0, host.length - 1);
       }
     }
     if (path != null) {
