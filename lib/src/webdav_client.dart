@@ -12,15 +12,17 @@ class WebDAVClient {
   int port;
   Dio _dio;
 
+  bool get isAvailable => host != null && authenticate != null;
+
   Map<String, dynamic> get headers => _dio.options.headers;
 
   WebDAVClient(
     this.host, {
     this.port,
     this.path,
-    @required this.authenticate,
+    this.authenticate,
   }) {
-    if (host.endsWith('/')) {
+    if (host != null && host.endsWith('/')) {
       host = host.substring(0, host.length - 1);
     }
     if (path != null) {
