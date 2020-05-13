@@ -73,6 +73,17 @@ class WebDAVClient {
     );
   }
 
+  Future<bool> _mkdir(WebDAVFile folder) async {
+    _dio.options.method = 'MKCOL';
+    Response response = await _dio.request(folder.path);
+    if (response.statusCode == 301) {
+      return false;
+    } else if (response.statusCode != 207) {
+      return false;
+    }
+    return true;
+  }
+
   Future<List<WebDAVFile>> _listFiles(WebDAVFile folder) async {
     _dio.options.method = 'PROPFIND';
     Response response = await _dio.request(folder.path);
@@ -192,7 +203,14 @@ class WebDAVFile {
     if (isFile) {
       return null;
     }
-    return client._listFiles(this);
+    return await client._listFiles(this);
+  }
+
+  Future<bool> mkdir() async {
+    if (isFile) {
+      return false;
+    }
+    return await client._mkdir(this);
   }
 
   Future<void> save({
