@@ -41,7 +41,7 @@ class WebDAVClient {
     _dio = Dio(
       BaseOptions(
         baseUrl:
-            '$host${port != null ? ':$port' : ''}${path != null ? '/$path' : ''}',
+            '$host${port != null ? ':$port' : ''}',
         headers: {
           'authorization': 'Basic $authenticate',
         },
