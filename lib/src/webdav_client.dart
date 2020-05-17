@@ -119,7 +119,7 @@ class WebDAVClient {
     } catch (e) {
       return null;
     }
-    if (response.statusCode != 200 || response.statusCode == 207) {
+    if (response.statusCode != 200 && response.statusCode != 207) {
       return null;
     }
     xml.XmlDocument document;

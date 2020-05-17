@@ -9,12 +9,12 @@ void main() {
       WebDAVClient client = WebDAVClient(
         'https://dav.jianguoyun.com/dav/',
         authenticate: WebDAVClient.encodeAuth(
-          name: '',
+          name: '@qq.com',
           password: '',
         ),
       );
-      WebDAVFile root = WebDAVFile(client: client, path: '/');
-      print(await root.exists());
+      WebDAVFile root = WebDAVFile(client: client, path: '/dav/timeNote');
+      print(await root.listFiles());
     },
     timeout: Timeout(Duration(days: 1)),
   );
