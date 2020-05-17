@@ -59,7 +59,7 @@ class WebDAVClient {
     }
     Response response;
     try {
-      await _dio.put(
+      response = await _dio.put(
         '${folder.path}$fileName',
         data: File(filePath).openRead(),
       );
