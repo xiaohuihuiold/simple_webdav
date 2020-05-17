@@ -78,8 +78,22 @@ class WebDAVClient {
     Response response = await _dio.request(folder.path);
     if (response.statusCode == 301) {
       return false;
-    } else if (response.statusCode != 207) {
+    } else if (response.statusCode == 207) {
       return false;
+    }
+    return true;
+  }
+
+  Future<bool> _exists(WebDAVFile folder) async {
+    _dio.options.method = 'PROPFIND';
+    try {
+      Response response = await _dio.request(folder.path);
+    } on DioError catch (e) {
+      if (e.response.statusCode == 404) {
+        return false;
+      }
+    } catch (e) {
+      return null;
     }
     return true;
   }
@@ -211,6 +225,10 @@ class WebDAVFile {
       return false;
     }
     return await client._mkdir(this);
+  }
+
+  Future<bool> exists() async {
+    return await client._exists(this);
   }
 
   Future<void> save({
