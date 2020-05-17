@@ -14,7 +14,7 @@ void main() {
         ),
       );
       WebDAVFile root = WebDAVFile(client: client, path: '/');
-      print(await root.listFiles());
+      print(await root.exists());
     },
     timeout: Timeout(Duration(days: 1)),
   );

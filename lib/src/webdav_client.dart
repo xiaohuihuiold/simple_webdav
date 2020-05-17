@@ -89,7 +89,7 @@ class WebDAVClient {
     try {
       Response response = await _dio.request(folder.path);
     } on DioError catch (e) {
-      if (e.response.statusCode == 404) {
+      if (e.response.statusCode != 200) {
         return false;
       }
     } catch (e) {
