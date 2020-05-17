@@ -9,8 +9,8 @@ void main() {
       WebDAVClient client = WebDAVClient(
         'https://dav.jianguoyun.com/dav/',
         authenticate: WebDAVClient.encodeAuth(
-          name: '2315870441@qq.com',
-          password: 'admb7s53u8cxesda',
+          name: '',
+          password: '',
         ),
       );
       WebDAVFile root = WebDAVFile(client: client, path: '/');

@@ -48,61 +48,76 @@ class WebDAVClient {
     );
   }
 
-  Future<void> _upload({
+  Future<bool> _upload({
     @required WebDAVFile folder,
     @required String filePath,
     String fileName,
   }) async {
     fileName ??= filePath.split('/').last;
-    await _dio.put(
-      '${folder.path}$fileName',
-      data: File(filePath).openRead(),
-    );
+    if (!await File(filePath).exists()) {
+      return false;
+    }
+    Response response;
+    try {
+      await _dio.put(
+        '${folder.path}$fileName',
+        data: File(filePath).openRead(),
+      );
+    } catch (e) {
+      return false;
+    }
+    return response.statusCode == 200 || response.statusCode == 207;
   }
 
-  Future<void> _download({
+  Future<bool> _download({
     @required WebDAVFile file,
     @required String savePath,
     ProgressCallback onReceiveProgress,
   }) async {
-    await _dio.download(
-      file.path,
-      savePath,
-      onReceiveProgress: onReceiveProgress,
-    );
+    Response response;
+    try {
+      response = await _dio.download(
+        file.path,
+        savePath,
+        onReceiveProgress: onReceiveProgress,
+      );
+    } catch (e) {
+      return false;
+    }
+    return response.statusCode == 200 || response.statusCode == 207;
   }
 
   Future<bool> _mkdir(WebDAVFile folder) async {
     _dio.options.method = 'MKCOL';
-    Response response = await _dio.request(folder.path);
-    if (response.statusCode == 301) {
-      return false;
-    } else if (response.statusCode == 207) {
+    Response response;
+    try {
+      response = await _dio.request(folder.path);
+    } catch (e) {
       return false;
     }
-    return true;
+    return response.statusCode == 200 || response.statusCode == 207;
   }
 
   Future<bool> _exists(WebDAVFile folder) async {
     _dio.options.method = 'PROPFIND';
+    Response response;
     try {
-      Response response = await _dio.request(folder.path);
-    } on DioError catch (e) {
-      if (e?.response?.statusCode != 200) {
-        return false;
-      }
+      response = await _dio.request(folder.path);
     } catch (e) {
-      return null;
+      return false;
     }
-    return true;
+    return response.statusCode == 200 || response.statusCode == 207;
   }
 
   Future<List<WebDAVFile>> _listFiles(WebDAVFile folder) async {
     _dio.options.method = 'PROPFIND';
-    Response response = await _dio.request(folder.path);
-    if (response.statusCode == 301) {
+    Response response;
+    try {
+      response = await _dio.request(folder.path);
+    } catch (e) {
       return null;
-    } else if (response.statusCode != 207) {
+    }
+    if (response.statusCode != 200 || response.statusCode == 207) {
       return null;
     }
     xml.XmlDocument document;
@@ -112,7 +127,6 @@ class WebDAVClient {
       print(e);
       return null;
     }
-    // print(document.toXmlString(pretty: true));
     Iterable<xml.XmlElement> responses = document.findAllElements('d:response');
     return responses.map((xml.XmlElement element) {
       WebDAVFile file = WebDAVFile(client: this);
@@ -230,28 +244,28 @@ class WebDAVFile {
     return await client._exists(this);
   }
 
-  Future<void> save({
+  Future<bool> save({
     @required String savePath,
     ProgressCallback onReceiveProgress,
   }) async {
     if (isDirectory) {
-      return;
+      return false;
     }
-    await client._download(
+    return await client._download(
       file: this,
       savePath: savePath,
       onReceiveProgress: onReceiveProgress,
     );
   }
 
-  Future<void> upload({
+  Future<bool> upload({
     @required String filePath,
     String fileName,
   }) async {
     if (isFile) {
-      return;
+      return false;
     }
-    await client._upload(
+    return await client._upload(
       folder: this,
       filePath: filePath,
       fileName: fileName,
