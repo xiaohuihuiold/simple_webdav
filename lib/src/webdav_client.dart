@@ -66,7 +66,9 @@ class WebDAVClient {
     } catch (e) {
       return false;
     }
-    return response.statusCode == 200 || response.statusCode == 207;
+    return response.statusCode == 200 ||
+        response.statusCode == 201 ||
+        response.statusCode == 204;
   }
 
   Future<bool> _download({
@@ -84,7 +86,7 @@ class WebDAVClient {
     } catch (e) {
       return false;
     }
-    return response.statusCode == 200 || response.statusCode == 207;
+    return response.statusCode == 200;
   }
 
   Future<bool> _mkdir(WebDAVFile folder) async {
@@ -95,7 +97,7 @@ class WebDAVClient {
     } catch (e) {
       return false;
     }
-    return response.statusCode == 200 || response.statusCode == 207;
+    return response.statusCode == 200 || response.statusCode == 201;
   }
 
   Future<bool> _exists(WebDAVFile folder) async {
